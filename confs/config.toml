@@ -1,0 +1,11 @@
+[default.database]
+project = "d-dodeka"
+image-name = "dodeka/postgres"
+version = "latest"
+host-port = "3141"
+container-port = "3141"
+resources-source = "@format {env[HOME]}/postgres_host/db"
+resources-target = "/dodeka-db"
+service_name = "db"
+volume_name = "db-volume"
+network_name = "dodeka"
