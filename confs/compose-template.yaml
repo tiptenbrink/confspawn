@@ -1,14 +1,14 @@
 services:
   # Service name, container name will be <project name>-<service name>-1 by default
-  <service_name>:
+  ~spwn@service_name@~:
     # Docker image that it will set up
     image:
     # A volume is basically a file system shared between the host and the container
     volumes:
       # <volume name in volumes below>:<container destination directory>
       # This means the volume will be accessible from the container in the dest. directory in the container
-      - <volume_name>:
-    command: -c config_file=/dodeka-conf/postgresql.conf
+      - ~spwn@volume_name@~:
+    command: -c config_file=${CONF_FILE}
     # Environment file to load into the container
     env_file:
       - .env.db
@@ -23,7 +23,7 @@ services:
     shm_size: 256m
 volumes:
   # This name should correspond to the volume mentioned in volumes above
-  <volume_name>:
+  ~spwn@volume_name@~:
     # A local directory
     driver: local
     driver_opts:
@@ -36,4 +36,4 @@ networks:
   # A different container on this network can access this container by using the container name as the hostname
   # So localhost:3000 is exposed to other containers as <container name>:3000
   default:
-    name: dodeka
+    name: ${NETWORK_NAME}
