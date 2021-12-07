@@ -9,6 +9,9 @@ license = "Apache-2"
 python = "^3.7"
 dynaconf = {extras = ["ini"], version = "^3.1.7"}
 
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

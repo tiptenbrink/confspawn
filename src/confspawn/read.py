@@ -1,6 +1,6 @@
 import re
 from re import Match
-from typing import Dict, Optional, AnyStr, Callable, Union
+from typing import Dict, Optional, AnyStr, Callable
 
 
 def replace(m: Match, replace_dict: Dict[AnyStr, AnyStr]):
