@@ -51,8 +51,10 @@ def spawn_write(config_pthstr, template_pthstr, target_dir="configged", join_tar
     template_files = []
     if join_target:
         target_path = db_path.joinpath(target_dir)
-    else:
+    elif not isinstance(target_dir, Path):
         target_path = Path(target_dir)
+    else:
+        target_path = target_dir
     if target_path.exists():
         shutil.rmtree(target_path)
     target_path.mkdir()
@@ -65,6 +67,8 @@ def spawn_write(config_pthstr, template_pthstr, target_dir="configged", join_tar
                 shutil.copy(glb, target_path)
 
     for templ_file in template_files:
+        # Get file mode
+        orig_mode = templ_file.stat().st_mode
         mod_template = spawn_template(str(config_path), templ_file, source_env)
         mod_name = removeprefix(templ_file.name, "template_")
         mod_path = target_path.joinpath(mod_name)
@@ -74,3 +78,5 @@ def spawn_write(config_pthstr, template_pthstr, target_dir="configged", join_tar
                 f"is in the main folder.")
         with open(mod_path, 'x') as f:
             f.write(mod_template)
+        # Set file mode
+        mod_path.chmod(orig_mode)
