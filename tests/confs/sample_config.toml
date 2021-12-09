@@ -5,3 +5,6 @@ b = "ThisB"
 d = "ThisD"
 volume_name = "some-volume"
 script_var = "myscript"
+
+[test]
+coolenv = "indeedenv"

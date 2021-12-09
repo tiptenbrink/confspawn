@@ -1,7 +1,8 @@
 from typing import Union, Optional
 import sys
-from pathlib import Path
+import os
 import shutil
+from pathlib import Path
 
 from dynaconf import Dynaconf
 from confspawn.util import deep_get
@@ -18,22 +19,37 @@ else:
         return string.removeprefix(prefix)
 
 
-def spawn_template(source_settings: Union[str, Path, Dynaconf, dict], template, source_env: Optional[str] = None):
-    if not isinstance(source_settings, Dynaconf) or not isinstance(source_settings, dict):
-        source_conf = Dynaconf(settings_files=[source_settings])
+def get_settings(settings: Union[str, Path, Dynaconf, dict], env) -> dict:
+    if not isinstance(settings, Dynaconf) or not isinstance(settings, dict):
+        conf = Dynaconf(settings_files=[settings])
     else:
-        source_conf = source_settings
+        conf = settings
 
-    if not isinstance(source_conf, dict):
-        source_dict: dict = source_conf.as_dict()
+    if not isinstance(conf, dict):
+        settings_dict: dict = conf.as_dict()
     else:
-        source_dict = source_conf
+        settings_dict = conf
 
-    if source_env is not None:
-        source_dict = deep_get(source_dict, source_env)
+    if env is not None:
+        settings_dict = deep_get(settings_dict, env)
 
-    if source_dict is None:
+    if settings_dict is None:
         raise ValueError("Unable to properly load source settings, please check paths!")
+
+    return settings_dict
+
+
+def load_env_var(settings: Union[str, Path, Dynaconf, dict], env, var_key):
+    settings_dict = get_settings(settings, env)
+    return settings_dict.get(var_key)
+
+
+def print_env_var(settings: Union[str, Path, Dynaconf, dict], env, var_key):
+    print(load_env_var(settings, env, var_key))
+
+
+def spawn_template(source_settings: Union[str, Path, Dynaconf, dict], template, source_env: Optional[str] = None):
+    source_dict = get_settings(source_settings, source_env)
 
     with open(template, 'r') as f:
         template_str = f.read()

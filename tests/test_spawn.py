@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from confspawn.spawn import spawn_template, spawn_write
+from confspawn.spawn import spawn_template, spawn_write, load_env_var
 
 
 @pytest.fixture
@@ -52,6 +52,14 @@ def test_file_mode(conf_dir, deploy_dir):
     target_script = conf_dir.joinpath("deploy/script.sh")
 
     assert os.access(target_script, os.X_OK)
+
+
+def test_env_var(conf_dir):
+    sample_conf = conf_dir.joinpath('sample_config.toml')
+
+    var = load_env_var(sample_conf, "test", "coolenv")
+
+    assert var == "indeedenv"
 
 
 
