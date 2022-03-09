@@ -48,9 +48,7 @@ def test_file_mode(conf_dir, deploy_dir):
     sample_conf = conf_dir.joinpath('sample_config.toml')
 
     spawn_write(sample_conf, "confs", target_dir=deploy_dir, join_target=False, source_env="default.nested")
-
     target_script = conf_dir.joinpath("deploy/script.sh")
-
     assert os.access(target_script, os.X_OK)
 
 
