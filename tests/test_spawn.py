@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from confspawn.spawn import spawn_template, spawn_write, load_env_var
+from confspawn.spawn import spawn_write, load_env_var
 
 
 @pytest.fixture
@@ -37,17 +37,14 @@ def test_spawn_write(conf_dir, configged_dir):
     template0 = conf_dir.joinpath('template_conf0.conf')
     template1 = conf_dir.joinpath('template_conf1.yaml')
 
-    zero = spawn_template(sample_conf, template0, "default.nested")
-    one = spawn_template(sample_conf, template1, "default.nested")
-
-    spawn_write(sample_conf, conf_dir, target_dir=configged_dir, join_target=False, source_env="default.nested")
+    spawn_write(sample_conf, conf_dir, configged_dir)
 
 
 @pytest.mark.skipif(os.name != 'posix', reason="Executable mode undefined outside posix")
 def test_file_mode(conf_dir, deploy_dir):
     sample_conf = conf_dir.joinpath('sample_config.toml')
 
-    spawn_write(sample_conf, "confs", target_dir=deploy_dir, join_target=False, source_env="default.nested")
+    spawn_write(sample_conf, conf_dir, deploy_dir)
     target_script = conf_dir.joinpath("deploy/script.sh")
     assert os.access(target_script, os.X_OK)
 
