@@ -165,7 +165,7 @@ def spawn_write(config_path: Path, template_path: Path, target_path: Path, recur
     defaults to 'confspawn_' but can be set using CONFSPAWN_PREFIX env
     var or directly in this function (the latter takes precedence).
     """
-    print(recurse)
+
     env = Environment(
         loader=SpawnLoader(template_path, recurse=recurse),
         autoescape=select_autoescape()
