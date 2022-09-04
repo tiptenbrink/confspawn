@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from confspawn.spawn import spawn_write, load_env_var
+from confspawn.spawn import spawn_write, load_config_value
 
 
 @pytest.fixture
@@ -34,8 +34,6 @@ def deploy_dir(conf_dir):
 
 def test_spawn_write(conf_dir, configged_dir):
     sample_conf = conf_dir.joinpath('sample_config.toml')
-    template0 = conf_dir.joinpath('template_conf0.conf')
-    template1 = conf_dir.joinpath('template_conf1.yaml')
 
     spawn_write(sample_conf, conf_dir, configged_dir)
 
@@ -52,7 +50,7 @@ def test_file_mode(conf_dir, deploy_dir):
 def test_env_var(conf_dir):
     sample_conf = conf_dir.joinpath('sample_config.toml')
 
-    var = load_env_var(sample_conf, "test", "coolenv")
+    var = load_config_value(sample_conf, "test", "coolenv")
 
     assert var == "indeedenv"
 
