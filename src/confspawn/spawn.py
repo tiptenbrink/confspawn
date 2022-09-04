@@ -26,13 +26,13 @@ def get_settings(settings: Path) -> dict:
     return toml_dict
 
 
-def load_env_var(settings: Path, env, var_key):
+def load_config_value(settings: Path, env, var_key):
     settings_dict = deep_get(get_settings(settings), env)
     return settings_dict.get(var_key)
 
 
-def print_env_var(settings: Path, env, var_key):
-    print(load_env_var(settings, env, var_key))
+def print_config_value(settings: Path, env, var_key):
+    print(load_config_value(settings, env, var_key))
 
 
 def if_to_spawn(pth: Path):
@@ -89,6 +89,7 @@ def spawn_template(config_dict: dict, template_name: str, template_env: Environm
 
 
 def spawn_write(config_path: Path, template_path: Path, target_path: Path):
+    """"""
     env = Environment(
         loader=SpawnLoader(template_path),
         autoescape=select_autoescape()
