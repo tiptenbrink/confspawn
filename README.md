@@ -29,7 +29,7 @@ optional arguments:
 ```
 
 ```
-usage: confspawn [-h] -c CONFIG -s TEMPLATE -t TARGET [-p PREFIX]
+usage: confspawn [-h] -c CONFIG -s TEMPLATE -t TARGET [-r] [-p PREFIX]
 
 Easily build configuration files from templates.
 
@@ -43,12 +43,13 @@ optional arguments:
   -s TEMPLATE, --template TEMPLATE
                         Template directory path where your configuration
                         templates are. Other files not indicated by prefix
-                        will also be copied over. Traverses subdirectories
-                        recursively.
+                        will also be copied over. Does not traverse
+                        subdirectories bt default.
   -t TARGET, --target TARGET
                         Target directory path where your files will end up
                         (will be created if none exists, also overwrites
                         previous directory).
+  -r, --recurse         Go through template directory recursively.
   -p PREFIX, --prefix PREFIX
                         Prefix that indicates file is a configuration
                         template. Defaults to 'confspawn_' or the value of the
