@@ -50,7 +50,7 @@ def test_file_mode(conf_dir, deploy_dir):
 def test_env_var(conf_dir):
     sample_conf = conf_dir.joinpath('sample_config.toml')
 
-    var = load_config_value(sample_conf, "test", "coolenv")
+    var = load_config_value(sample_conf, "test.coolenv")
 
     assert var == "indeedenv"
 
