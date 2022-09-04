@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "confspawn"
 version = "0.2.0"
-description = ""
+description = "Easily build configuration files from templates."
 authors = ["Tip ten Brink <75669206+tiptenbrink@users.noreply.github.com>"]
 license = "Apache-2"
 
