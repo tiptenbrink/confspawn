@@ -129,7 +129,10 @@ def move_other_files(template_path: Path, target_path: Path, recurse: bool = Fal
     """
     for file_pth in _get_all_sub_files(template_path, recurse):
         if file_pth.is_file() and not file_pth.name.startswith(prefix_name):
-            shutil.copy(file_pth, target_path)
+            # ensure target directory exists
+            target_dir = target_path.joinpath(file_pth.relative_to(template_path)).parent
+            target_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copy(file_pth, target_dir)
 
 
 def spawn_templates(env: Environment, config_dict: dict, target_path: Path, prefix_name: str = set_prefix_name):
@@ -146,7 +149,7 @@ def spawn_templates(env: Environment, config_dict: dict, target_path: Path, pref
         mod_path = mod_path_with_prefix.parent.joinpath(mod_name)
         if mod_path.exists():
             raise ValueError(
-                f"Modified template file {mod_template} already exists! Ensure no version without {prefix_name}"
+                f"Modified template file {templ_name} already exists! Ensure no version without {prefix_name}"
                 f"is in the main folder.")
         mod_path.parent.mkdir(exist_ok=True, parents=True)
         with open(mod_path, 'x') as f:

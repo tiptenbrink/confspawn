@@ -38,6 +38,12 @@ def test_spawn_write(conf_dir, configged_dir):
     spawn_write(sample_conf, conf_dir, configged_dir)
 
 
+def test_spawn_write_recurse(conf_dir, configged_dir):
+    sample_conf = conf_dir.joinpath('sample_config.toml')
+
+    spawn_write(sample_conf, conf_dir, configged_dir, recurse=True)
+
+
 @pytest.mark.skipif(os.name != 'posix', reason="Executable mode undefined outside posix")
 def test_file_mode(conf_dir, deploy_dir):
     sample_conf = conf_dir.joinpath('sample_config.toml')
