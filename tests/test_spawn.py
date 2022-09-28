@@ -22,7 +22,7 @@ def conf_dir(test_dir):
 def configged_dir(conf_dir):
     conffiged_dir_pth = conf_dir.joinpath("configged")
     yield conffiged_dir_pth
-    # shutil.rmtree(conffiged_dir_pth)
+    shutil.rmtree(conffiged_dir_pth)
 
 
 @pytest.fixture
