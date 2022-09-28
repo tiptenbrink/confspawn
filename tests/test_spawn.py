@@ -35,7 +35,7 @@ def deploy_dir(conf_dir):
 def test_spawn_write(conf_dir, configged_dir):
     sample_conf = conf_dir.joinpath('sample_config.toml')
 
-    spawn_write(sample_conf, conf_dir, configged_dir)
+    spawn_write(sample_conf, conf_dir, configged_dir, env_mode='production')
 
 
 def test_spawn_write_recurse(conf_dir, configged_dir):
