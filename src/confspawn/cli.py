@@ -86,9 +86,10 @@ def spawner():
     target_path = p.Path(config[target_nm])
 
     if config[prefix_nm] is None:
-        spawn_write(config_path, template_path, target_path, config[recurse_nm])
+        spawn_write(config_path, template_path, target_path, config[recurse_nm], env_mode=config[env_nm])
     else:
-        spawn_write(config_path, template_path, target_path, config[recurse_nm], config[prefix_nm])
+        spawn_write(config_path, template_path, target_path, config[recurse_nm], config[prefix_nm],
+                    env_mode=config[env_nm])
 
 
 def config_value():
@@ -141,4 +142,4 @@ def config_value():
 
     config = vars(parser.parse_args())
 
-    print(load_config_value(config[config_nm], config[var_nm]))
+    print(load_config_value(config[config_nm], config[var_nm], config[env_nm]))

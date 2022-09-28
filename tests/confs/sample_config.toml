@@ -9,7 +9,7 @@ script_var = "myscript"
 [test]
 coolenv = "indeedenv"
 
-[confspawn_env.less]
+[confspawn_env.staging]
 value = "forstaging"
 
 [confspawn_env.production]
