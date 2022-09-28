@@ -21,14 +21,21 @@ else:
         return string.removeprefix(prefix)
 
 
-def _get_settings(settings: Path) -> dict:
+def _get_settings(settings: Path, env_mode: str) -> dict:
     with open(settings, "rb") as f:
         toml_dict = tomli.load(f)
+
+    if 'confspawn_env' in toml_dict.keys():
+        envs = toml_dict['confspawn_env']
+        if isinstance(envs, dict) and env_mode in envs.keys():
+            toml_dict['confspawn_env'] = envs[env_mode]
+        else:
+            toml_dict.pop('confspawn_env')
 
     return toml_dict
 
 
-def load_config_value(settings: Path, var_key: str):
+def load_config_value(settings: Path, var_key: str, env_mode: str = "less"):
     """Returns the value from a dict loaded from TOML file at the `settings`
     path.
 
@@ -38,7 +45,7 @@ def load_config_value(settings: Path, var_key: str):
     Can be used in combination with a print to extract it as an env var.
     See the `confenv` CLI command (`confspawn.cli.config_value`).
     """
-    return _deep_get(_get_settings(settings), var_key)
+    return _deep_get(_get_settings(settings, env_mode), var_key)
 
 
 def _deep_get(dic: dict, keys: str, default=None):
@@ -159,7 +166,7 @@ def spawn_templates(env: Environment, config_dict: dict, target_path: Path, pref
 
 
 def spawn_write(config_path: Path, template_path: Path, target_path: Path, recurse: bool = False,
-                prefix_name: str = set_prefix_name):
+                prefix_name: str = set_prefix_name, env_mode: str = "less"):
     """Ensures empty directory exists at target (removing any that exist).
 
     It then copies non-template files. Finally, it replaces the template
@@ -173,7 +180,7 @@ def spawn_write(config_path: Path, template_path: Path, target_path: Path, recur
         loader=SpawnLoader(template_path, recurse=recurse),
         autoescape=select_autoescape()
     )
-    config_dict = _get_settings(config_path)
+    config_dict = _get_settings(config_path, env_mode)
 
     _prepare_target(target_path)
 

@@ -26,6 +26,10 @@ optional arguments:
   -v VARIABLE, --variable VARIABLE
                         Variable name to print. For nested keys, use e.g.
                         'toplevel.secondlevel.varname'.
+  -e ENV, --env ENV     Useful to specify environment-related modes, i.e.
+                        production or development. 'confspawn_env.value' will
+                        refer to 'confspawn_env.env.value'. Defaults to
+                        'less'.
 ```
 
 ```
@@ -54,6 +58,10 @@ optional arguments:
                         Prefix that indicates file is a configuration
                         template. Defaults to 'confspawn_' or the value of the
                         CONFSPAWN_PREFIX env var, if set.
+  -e ENV, --env ENV     Useful to specify environment-related modes, i.e.
+                        production or development. 'confspawn_env.value' will
+                        refer to 'confspawn_env.env.value'. Defaults to
+                        'less'.
 ```
 
 The main entrypoints to use `confspawn` programmatically are `spawn_write()` (corresponds to the `confspawn` command) and `load_config_value()` (corresponds to the `confenv` command). See the documentation for more details.

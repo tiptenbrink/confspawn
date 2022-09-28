@@ -32,6 +32,10 @@ def spawner():
                             Prefix that indicates file is a configuration
                             template. Defaults to 'confspawn_' or the value of the
                             CONFSPAWN_PREFIX env var, if set.
+      -e ENV, --env ENV     Useful to specify environment-related modes, i.e.
+                            production or development. 'confspawn_env.value' will
+                            refer to 'confspawn_env.env.value'. Defaults to
+                            'less'.
 
     ```
     """
@@ -68,6 +72,13 @@ def spawner():
                   f"'{prefix_default}' or the value of the CONFSPAWN_PREFIX env var, if set."
     parser.add_argument('-p', f'--{prefix_nm}', help=prefix_help, required=False)
 
+    env_nm = 'env'
+    env_default = "less"
+    env_help = f"Useful to specify environment-related modes, i.e. production or development. " \
+               f"'confspawn_env.value' will refer to 'confspawn_env.env.value'. Defaults to" \
+               f"'{env_default}'."
+    parser.add_argument('-e', f'--{env_nm}', help=env_help, required=False)
+
     config = vars(parser.parse_args())
 
     config_path = p.Path(config[config_nm])
@@ -98,6 +109,10 @@ def config_value():
       -v VARIABLE, --variable VARIABLE
                             Variable name to print. For nested keys, use e.g.
                             'toplevel.secondlevel.varname'.
+      -e ENV, --env ENV     Useful to specify environment-related modes, i.e.
+                            production or development. 'confspawn_env.value' will
+                            refer to 'confspawn_env.env.value'. Defaults to
+                            'less'.
     ```
     """
     cli_name = 'confenv'
@@ -116,6 +131,13 @@ def config_value():
     var_nm = 'variable'
     var_help = "Variable name to print. For nested keys, use e.g. 'toplevel.secondlevel.varname'."
     parser.add_argument('-v', f'--{var_nm}', help=var_help, required=True)
+
+    env_nm = 'env'
+    env_default = "less"
+    env_help = f"Useful to specify environment-related modes, i.e. production or development. " \
+               f"'confspawn_env.value' will refer to 'confspawn_env.env.value'. Defaults to" \
+               f"'{env_default}'."
+    parser.add_argument('-e', f'--{env_nm}', help=env_help, required=False)
 
     config = vars(parser.parse_args())
 
