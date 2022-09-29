@@ -1,0 +1,16 @@
+config = "sample_config.toml"
+
+[[sources]]
+source = "recipe/production"
+target = "use/production"
+env = "confspawn_default"
+
+[[sources]]
+source = "recipe/s1"
+target = "use/production/s1"
+env = "confspawn_default"
+
+[[sources]]
+source = "recipe/s2"
+target = "use/production/s2"
+env = "confspawn_default"

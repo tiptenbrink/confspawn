@@ -64,4 +64,24 @@ optional arguments:
                         'less'.
 ```
 
+```
+usage: confrecipe [-h] -r RECIPE [-p PREFIX] [-e ENV]
+
+Build multiple confspawn configurations using a recipe.
+
+examples:
+confrecipe -c ./config.toml -s ./foo/templates -t /home/me/target
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -r RECIPE, --recipe RECIPE
+                        File path for your TOML recipe file.
+  -p PREFIX, --prefix PREFIX
+                        Prefix that indicates file is a configuration
+                        template. Defaults to 'confspawn_' or the value of the
+                        CONFSPAWN_PREFIX env var, if set.
+  -e ENV, --env ENV     Overwrite env set in recipe. Defaults to 'None'.
+
+```
+
 The main entrypoints to use `confspawn` programmatically are `spawn_write()` (corresponds to the `confspawn` command) and `load_config_value()` (corresponds to the `confenv` command). See the documentation for more details.

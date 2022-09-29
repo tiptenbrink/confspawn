@@ -1,7 +1,7 @@
 import argparse
 import pathlib as p
 
-from confspawn import load_config_value, spawn_write
+from confspawn import load_config_value, spawn_write, recipe
 
 
 def spawner():
@@ -143,3 +143,58 @@ def config_value():
     config = vars(parser.parse_args())
 
     print(load_config_value(config[config_nm], config[var_nm], config[env_nm]))
+
+
+def recipizer():
+    """
+    ```shell
+    usage: confrecipe [-h] -r RECIPE [-p PREFIX] [-e ENV]
+
+    Build multiple confspawn configurations using a recipe.
+
+    examples:
+    confrecipe -c ./config.toml -s ./foo/templates -t /home/me/target
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -r RECIPE, --recipe RECIPE
+                            File path for your TOML recipe file.
+      -p PREFIX, --prefix PREFIX
+                            Prefix that indicates file is a configuration
+                            template. Defaults to 'confspawn_' or the value of the
+                            CONFSPAWN_PREFIX env var, if set.
+      -e ENV, --env ENV     Overwrite env set in recipe. Defaults to 'None'.
+
+    ```
+    """
+    cli_name = 'confrecipe'
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+                                     description="Build multiple confspawn configurations using a recipe.\n"
+                                                 "\n\n"
+                                                 "examples:\n"
+                                                 f"{cli_name} -c ./config.toml -s ./foo/templates -t /home/me/target\n")
+
+    recipe_nm = 'recipe'
+    recipe_help = "File path for your TOML recipe file."
+    parser.add_argument('-r', f'--{recipe_nm}', help=recipe_help, required=True)
+
+    prefix_nm = 'prefix'
+    prefix_default = "confspawn_"
+    prefix_help = f"Prefix that indicates file is a configuration template. Defaults to\n" \
+                  f"'{prefix_default}' or the value of the CONFSPAWN_PREFIX env var, if set."
+    parser.add_argument('-p', f'--{prefix_nm}', help=prefix_help, required=False)
+
+    env_nm = 'env'
+    env_default = None
+    env_help = f"Overwrite env set in recipe. Defaults to '{env_default}'."
+    parser.add_argument('-e', f'--{env_nm}', help=env_help, required=False)
+
+    config = vars(parser.parse_args())
+
+    recipe_path = p.Path(config[recipe_nm])
+
+    if config[prefix_nm] is None:
+        recipe(recipe_path, env_overwrite=config[env_nm])
+    else:
+        recipe(recipe_path, config[prefix_nm], config[env_nm])
+

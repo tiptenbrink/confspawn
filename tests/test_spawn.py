@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from confspawn.spawn import spawn_write, load_config_value
+from confspawn.spawn import spawn_write, load_config_value, recipe
 
 
 @pytest.fixture
@@ -14,49 +14,59 @@ def test_dir():
 
 
 @pytest.fixture
-def conf_dir(test_dir):
+def conf_pth(test_dir):
+    return test_dir.joinpath("sample_config.toml")
+
+
+@pytest.fixture
+def templ_dir(test_dir):
     return test_dir.joinpath("confs")
 
 
 @pytest.fixture
-def configged_dir(conf_dir):
-    conffiged_dir_pth = conf_dir.joinpath("configged")
+def configged_dir(templ_dir):
+    conffiged_dir_pth = templ_dir.joinpath("configged")
     yield conffiged_dir_pth
     shutil.rmtree(conffiged_dir_pth)
 
 
 @pytest.fixture
-def deploy_dir(conf_dir):
-    deploy_dir_pth = conf_dir.joinpath("deploy")
+def deploy_dir(templ_dir):
+    deploy_dir_pth = templ_dir.joinpath("deploy")
     yield deploy_dir_pth
     shutil.rmtree(deploy_dir_pth)
 
 
-def test_spawn_write(conf_dir, configged_dir):
-    sample_conf = conf_dir.joinpath('sample_config.toml')
+@pytest.fixture
+def use_dir(test_dir):
+    use_dir_pth = test_dir.joinpath("use")
+    use_dir_pth.mkdir()
+    yield
+    shutil.rmtree(use_dir_pth)
 
-    spawn_write(sample_conf, conf_dir, configged_dir, env_mode='production')
+
+def test_spawn_write(templ_dir, configged_dir, conf_pth):
+    spawn_write(conf_pth, templ_dir, configged_dir, env_mode='production')
 
 
-def test_spawn_write_recurse(conf_dir, configged_dir):
-    sample_conf = conf_dir.joinpath('sample_config.toml')
-
-    spawn_write(sample_conf, conf_dir, configged_dir, recurse=True)
+def test_spawn_write_recurse(templ_dir, configged_dir, conf_pth):
+    spawn_write(conf_pth, templ_dir, configged_dir, recurse=True)
 
 
 @pytest.mark.skipif(os.name != 'posix', reason="Executable mode undefined outside posix")
-def test_file_mode(conf_dir, deploy_dir):
-    sample_conf = conf_dir.joinpath('sample_config.toml')
-
-    spawn_write(sample_conf, conf_dir, deploy_dir)
-    target_script = conf_dir.joinpath("deploy/script.sh")
+def test_file_mode(templ_dir, deploy_dir, conf_pth):
+    spawn_write(conf_pth, templ_dir, deploy_dir)
+    target_script = templ_dir.joinpath("deploy/script.sh")
     assert os.access(target_script, os.X_OK)
 
 
-def test_env_var(conf_dir):
-    sample_conf = conf_dir.joinpath('sample_config.toml')
+def test_recipizer(conf_pth, test_dir, use_dir):
+    r_path = test_dir.joinpath("recipe/production/production.spwn.toml")
+    recipe(r_path, env_overwrite="production")
 
-    var = load_config_value(sample_conf, "test.coolenv")
+
+def test_env_var(conf_pth):
+    var = load_config_value(conf_pth, "test.coolenv")
 
     assert var == "indeedenv"
 

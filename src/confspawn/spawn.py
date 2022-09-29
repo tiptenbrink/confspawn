@@ -8,7 +8,7 @@ import tomli
 
 from jinja2 import BaseLoader, Environment, TemplateNotFound, select_autoescape
 
-__all__ = ['spawn_write', 'load_config_value', 'move_other_files', 'spawn_templates']
+__all__ = ['spawn_write', 'load_config_value', 'move_other_files', 'spawn_templates', 'recipe']
 
 if sys.version_info < (3, 9):
     def removeprefix(string: str, prefix: str) -> str:
@@ -129,13 +129,18 @@ def _prepare_target(target_path: Path):
     target_path.mkdir()
 
 
-def move_other_files(template_path: Path, target_path: Path, recurse: bool = False, prefix_name: str = set_prefix_name):
+def move_other_files(template_path: Path, target_path: Path, recurse: bool = False, prefix_name: str = set_prefix_name,
+                     ignore_list: t.Optional[set] = None):
     """Move all files that are not template files to the other directory.
 
     The directory must exist.
     """
+    if ignore_list is None:
+        ignore_list = set()
+
     for file_pth in _get_all_sub_files(template_path, recurse):
-        if file_pth.is_file() and not file_pth.name.startswith(prefix_name):
+        if file_pth.is_file() and not file_pth.name.startswith(prefix_name) and str(file_pth.resolve()) not in \
+                ignore_list:
             # ensure target directory exists
             target_dir = target_path.joinpath(file_pth.relative_to(template_path)).parent
             target_dir.mkdir(parents=True, exist_ok=True)
@@ -156,7 +161,7 @@ def spawn_templates(env: Environment, config_dict: dict, target_path: Path, pref
         mod_path = mod_path_with_prefix.parent.joinpath(mod_name)
         if mod_path.exists():
             raise ValueError(
-                f"Modified template file {templ_name} already exists! Ensure no version without {prefix_name}"
+                f"Modified template file {templ_name} already exists! Ensure no version without {prefix_name} "
                 f"is in the main folder.")
         mod_path.parent.mkdir(exist_ok=True, parents=True)
         with open(mod_path, 'x') as f:
@@ -166,7 +171,7 @@ def spawn_templates(env: Environment, config_dict: dict, target_path: Path, pref
 
 
 def spawn_write(config_path: Path, template_path: Path, target_path: Path, recurse: bool = False,
-                prefix_name: str = set_prefix_name, env_mode: str = "less"):
+                prefix_name: str = set_prefix_name, env_mode: str = "less", ignore_list: t.Optional[set] = None):
     """Ensures empty directory exists at target (removing any that exist).
 
     It then copies non-template files. Finally, it replaces the template
@@ -176,6 +181,9 @@ def spawn_write(config_path: Path, template_path: Path, target_path: Path, recur
     var or directly in this function (the latter takes precedence).
     """
 
+    if ignore_list is None:
+        ignore_list = set()
+
     env = Environment(
         loader=SpawnLoader(template_path, recurse=recurse),
         autoescape=select_autoescape()
@@ -184,7 +192,31 @@ def spawn_write(config_path: Path, template_path: Path, target_path: Path, recur
 
     _prepare_target(target_path)
 
-    move_other_files(template_path, target_path, recurse, prefix_name)
+    move_other_files(template_path, target_path, recurse, prefix_name, ignore_list)
 
     spawn_templates(env, config_dict, target_path, prefix_name)
+
+
+def recipe(recipe_path: Path, prefix_name: str = set_prefix_name, env_overwrite: t.Optional[str] = None):
+    with open(recipe_path, "rb") as f:
+        recipe_dict = tomli.load(f)
+
+    config_path = Path(recipe_dict['config'])
+
+    ignore_list = {str(recipe_path.resolve())}
+
+    for d in recipe_dict['sources']:
+        if env_overwrite is None:
+            env = d['env']
+        else:
+            env = env_overwrite
+
+        recurse = d['recurse'] if 'recurse' in d.keys() else False
+
+        s_pth = Path(d['source'])
+        t_pth = Path(d['target'])
+
+        spawn_write(config_path, s_pth, t_pth, recurse, prefix_name, env_mode=env, ignore_list=ignore_list)
+
+
 
