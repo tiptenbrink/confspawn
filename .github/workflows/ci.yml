@@ -12,38 +12,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - run: pipx install poetry==1.2.1
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-      - name: Load cached Poetry installation
-        uses: actions/cache@v2
-        with:
-          path: ~/.local 
-          key: poetry-0 
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-      - name: Load cached venv
-        id: cached-pip-wheels
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache
-          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-      - name: Install dependencies
-        run: poetry install --no-interaction --no-root
-      - name: Install library
-        run: poetry install --no-interaction
-      - name: Pytest
-        run: |
-          source $VENV
-          pytest
+          cache: 'poetry'
+      - run: poetry install
+      - run: poetry run pytest
+        working-directory: ${{ github.workspace }}/tests
       - name: Build
         run: poetry build
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: dist
           path: ${{ github.workspace }}/dist/
@@ -54,12 +34,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Download artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: dist
         path: ${{ github.workspace }}/dist/
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: '3.10'
     - name: Install wheel test
