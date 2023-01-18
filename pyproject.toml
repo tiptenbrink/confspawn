@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "confspawn"
-version = "0.4.0"
+version = "0.4.1"
 description = "Easily build configuration files from templates."
 authors = ["Tip ten Brink <75669206+tiptenbrink@users.noreply.github.com>"]
 readme = "README.md"

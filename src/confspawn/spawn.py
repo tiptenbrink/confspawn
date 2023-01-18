@@ -126,7 +126,7 @@ class SpawnLoader(BaseLoader):
 def _prepare_target(target_path: Path):
     if target_path.exists():
         shutil.rmtree(target_path)
-    target_path.mkdir()
+    target_path.mkdir(parents=True)
 
 
 def move_other_files(template_path: Path, target_path: Path, recurse: bool = False, prefix_name: str = set_prefix_name,
