@@ -5,8 +5,22 @@ PostgreSQL database.
 .. include:: ./documentation.md
 """
 
-from confspawn.spawn import spawn_write, load_config_value, move_other_files, spawn_templates, recipe
+from confspawn.spawn import (
+    spawn_write,
+    load_config_value,
+    move_other_files,
+    spawn_templates,
+    recipe,
+)
 from confspawn.cli import spawner, config_value, recipizer
 
-__all__ = ['spawn_write', 'load_config_value', 'move_other_files', 'spawn_templates', 'spawner', 'config_value',
-           'recipe', 'recipizer']
+__all__ = [
+    "spawn_write",
+    "load_config_value",
+    "move_other_files",
+    "spawn_templates",
+    "spawner",
+    "config_value",
+    "recipe",
+    "recipizer",
+]

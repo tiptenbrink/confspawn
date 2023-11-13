@@ -12,5 +12,5 @@ env = "confspawn_default"
 
 [[sources]]
 source = "recipe/s2"
-target = "use/production/s2"
+target = "use/production"
 env = "confspawn_default"
